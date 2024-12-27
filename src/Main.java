@@ -4,6 +4,8 @@ public class Main {
         //cc.tester();
 
         WordsInFiles wi = new WordsInFiles();
-        wi.tester();
+        wi.tester4();
+        GladLibMap gm = new GladLibMap();
+        //gm.makeStory();
     }
 }

@@ -1,26 +1,23 @@
 import edu.duke.FileResource;
 import edu.duke.URLResource;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 public class GladLibMap {
 
-    private ArrayList<String> adjectiveList;
-    private ArrayList<String> nounList;
-    private ArrayList<String> colorList;
-    private ArrayList<String> countryList;
-    private ArrayList<String> nameList;
-    private ArrayList<String> animalList;
-    private ArrayList<String> timeList;
-    private ArrayList<String> verbList;
-    private ArrayList<String> fruitList;
+    private HashMap<String, ArrayList<String>> wordsMap;
+
     private ArrayList<String> usedWordList;
 
     private Random myRandom;
 
     private static String dataSourceURL = "http://dukelearntoprogram.com/course3/data";
-    private static String dataSourceDirectory = "data1";
+    private static String dataSourceDirectory = "datalong" +
+            "";
 
     public GladLibMap(){
         initializeFromSource(dataSourceDirectory);
@@ -33,15 +30,13 @@ public class GladLibMap {
     }
 
     private void initializeFromSource(String source) {
-        adjectiveList= readIt(source+"/adjective.txt");
-        nounList = readIt(source+"/noun.txt");
-        colorList = readIt(source+"/color.txt");
-        countryList = readIt(source+"/country.txt");
-        nameList = readIt(source+"/name.txt");
-        animalList = readIt(source+"/animal.txt");
-        timeList = readIt(source+"/timeframe.txt");
-        verbList = readIt(source+"/verb.txt");
-        fruitList = readIt(source+"/fruit.txt");
+        wordsMap = new HashMap<>();
+        String [] labels = {"adjectiveList", "nounList", "colorList", "countryList", "nameList", "animalList", "timeList", "verbList",
+                "fruitList"};
+        for(String label : labels){
+            ArrayList<String> list = readIt(source + "/" + label.substring(0,label.indexOf("List")) + ".txt");
+            wordsMap.put(label, list);
+        }
         usedWordList = new ArrayList<>();
     }
 
@@ -51,38 +46,19 @@ public class GladLibMap {
     }
 
     private String getSubstitute(String label) {
-        if (label.equals("country")) {
-            return randomFrom(countryList);
+//        if (label.equals("country")) {
+//            return randomFrom(countryList);
+//        }
+        label = label.concat("List");
+        if(label.contains("number")){
+            return "" + myRandom.nextInt(50) + 5;
         }
-        if (label.equals("color")){
-            return randomFrom(colorList);
+        for(String key : wordsMap.keySet()){
+            if(key.equals(label)){
+                return randomFrom(wordsMap.get(key));
+            }
         }
-        if (label.equals("noun")){
-            return randomFrom(nounList);
-        }
-        if (label.equals("name")){
-            return randomFrom(nameList);
-        }
-        if (label.equals("adjective")){
-            return randomFrom(adjectiveList);
-        }
-        if (label.equals("animal")){
-            return randomFrom(animalList);
-        }
-        if (label.equals("timeframe")){
-            return randomFrom(timeList);
-        }
-        if (label.equals("number")){
-            return ""+myRandom.nextInt(50)+5;
-        }
-        if (label.equals("verb")){
-            return randomFrom(verbList);
-        }
-        if (label.equals("fruit")){
-            return randomFrom(fruitList);
-        }
-
-
+//
         return "**UNKNOWN**";
     }
 
@@ -92,16 +68,13 @@ public class GladLibMap {
         if (first == -1 || last == -1){
             return w;
         }
-        String prefix;
-        String suffix;
-        String sub;
-
-        do {
-            prefix = w.substring(0, first);
-            suffix = w.substring(last + 1);
+        String prefix = w.substring(0, first);
+        String suffix = w.substring(last + 1);
+        String sub = getSubstitute(w.substring(first + 1, last));
+        while (usedWordList.contains(sub)){
             sub = getSubstitute(w.substring(first + 1, last));
-        } while (usedWordList.contains(sub));
-        usedWordList.add(sub);
+            usedWordList.add(sub);
+        }
         return prefix+sub+suffix;
     }
 
@@ -154,11 +127,13 @@ public class GladLibMap {
     public void makeStory(){
         usedWordList.clear();
         System.out.println("\n");
-        String story = fromTemplate("data1/madtemplate.txt");
+        String story = fromTemplate("data" +
+                "/madtemplate.txt");
         System.out.println("Total words used: " + get_word_count());
 
         usedWordList.clear();
-        String story2 = fromTemplate("data1/madtemplate2.txt");
+        String story2 = fromTemplate("data" +
+                "/madtemplate2.txt");
         System.out.println("Total words used: " + get_word_count());
         printOut(story, 60);
         System.out.println(" ");
@@ -169,7 +144,14 @@ public class GladLibMap {
 
     }
 
+    public void printMap(){
+        for(String label : wordsMap.keySet()){
+            System.out.println(label + ": " + wordsMap.get(label).size());
+        }
+    }
+
     public int get_word_count(){
         return usedWordList.size();
     }
+
 }

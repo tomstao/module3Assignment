@@ -60,14 +60,58 @@ public class WordsInFiles {
         }
     }
 
+    public void get_occurence(int num) {
+        int maxOccurrence = 0;
+        for(String f : wordLists.keySet()) {
+            if(wordLists.get(f).size() == num) {
+               maxOccurrence++;
+            }
+        }
+
+        System.out.println("The number of words that occur in " + num + " files: " + maxOccurrence);
+    }
+
     public void tester() {
         buildWordFileMap();
         System.out.println("The number of word's most occurrence in files: " + maxNumber());
-
+        int wordCount = 0;
+        for(String w : wordLists.keySet()) {
+            if(wordLists.get(w).size() == 5){
+                wordCount++;
+                //printFilesIn(w);
+            }
+        }
+        System.out.println(wordCount + " words occurs 5 times in the following files: ");
         for(String word : wordsInNumFiles(maxNumber())) {
             System.out.println(word + " has the max occurrence: " + maxNumber());
             printFilesIn(word);
         }
 
+    }
+
+    public void tester2() {
+        buildWordFileMap();
+        get_occurence(4);
+        for(String f : wordLists.get("red")) {
+            System.out.println(f + " has the word 'red'");
+        }
+    }
+
+    public void tester3() {
+        buildWordFileMap();
+        int maxOccurrence = 0;
+        for(String w : wordLists.keySet()) {
+            if(wordLists.get(w).size() == 4) {
+                maxOccurrence ++;
+            }
+        }
+        System.out.println("The number of words that occur in 4 files: " + maxOccurrence);
+    }
+
+    public void tester4() {
+        buildWordFileMap();
+        for(String f : wordLists.get("tree")) {
+            System.out.println(f + " has the word 'tree'");
+        }
     }
 }
